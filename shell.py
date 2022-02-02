@@ -71,7 +71,7 @@ def main():
         if(str == ''):
             main()
         elif (str == 'exit'):
-            os.exit(0)
+            sys.exit(0)
         elif (str == 'help'):
             os.write(1, (f'sorry no help at this time').encode())
         elif((str[0:2] == 'cd') and (len(str) > 2)):
