@@ -71,11 +71,11 @@ def main():
         if(str == ''):
             main()
         elif (str == 'exit'):
-            break
+            os.exit(0)
         elif (str == 'help'):
             os.write(1, (f'sorry no help at this time').encode())
         elif((str[0:2] == 'cd') and (len(str) > 2)):
-            ch_dir(str[3:len(str)])
+            ch_dir(str[3:])
         elif((len(str) == 2) and (str[0:2] == 'cd')):
             os.chdir(os.environ['HOME'])
         else:
