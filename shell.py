@@ -21,7 +21,7 @@ def ch_dir(folder):
     try:
         os.chdir(folder)
     except FileNotFoundError:
-        os.write(1, (f'file {commands[1]} not found\n').encode())
+        os.write(1, (f'file {folder} not found\n').encode())
 
 
 
@@ -42,8 +42,8 @@ def perform_task(commands):
         program = f'{dir}/{commands[0]}'
         try:
             os.execve(program, commands, os.environ)
-        except OSError as error:
-            os.write(1,(f'Error code: {error}\n').encode())
+        except OSError:
+            pass #os.write(1,(f'Error code: {error}\n').encode())
 
 
 def execute_command(commands):
@@ -59,6 +59,29 @@ def execute_command(commands):
     else:
         os.wait()
 
+def redirect(commands):
+    """
+    Redirect stdout to a file
+    """
+    rc = os.fork()                  # invoking a child
+
+    if rc < 0:
+        os.write(2, ("fork failed, returning %d\n" % rc).encode())
+        sys.exit(1)
+
+    elif rc == 0:                   # child
+        args = [commands[0], commands[1]]
+
+        os.close(1)                 # redirect child's stdout
+        os.open(commands[3], os.O_CREAT | os.O_WRONLY);
+        os.set_inheritable(1, True)
+
+        perform_task(args)
+
+    else:                           # parent (forked ok)
+        os.wait()
+
+    
 def main():
     """
     run my shell forever or at leas until 
@@ -73,14 +96,17 @@ def main():
         elif (str == 'exit'):
             sys.exit(0)
         elif (str == 'help'):
-            os.write(1, (f'sorry no help at this time').encode())
+            os.write(1, ('sorry no help at this time').encode())
         elif((str[0:2] == 'cd') and (len(str) > 2)):
             ch_dir(str[3:])
         elif((len(str) == 2) and (str[0:2] == 'cd')):
             os.chdir(os.environ['HOME'])
         else:
             commands = param(str)
-            execute_command(commands)
+            if (len(commands) > 3 and commands[2] == '>'):
+                redirect(commands)
+            else:
+                execute_command(commands)
 
 
 main()
