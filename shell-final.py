@@ -134,7 +134,7 @@ def ch_dir(folder=''):
         
 def l_2(a,b,c):
     """
-    process one pipe
+    process two pipe
 
     Parameters
     ----------
@@ -331,10 +331,6 @@ def cursor():
     user_input = os.read(stdin, 100).decode()
     possible_command = user_input[0:-1]
     return possible_command
-
-
-
-#def operator():
     
 ###############################################################################
 
@@ -353,7 +349,6 @@ def cd(folder):
         except FileNotFoundError:
             os.write(1, (f'file {folder} not found\n').encode())
 
-    
 ###############################################################################
 
 n = 1
